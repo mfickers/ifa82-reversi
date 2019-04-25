@@ -7,8 +7,5 @@
 #ifndef GAME_H_INCLUDED
 #define GAME_H_INCLUDED
 
-struct board {
-
-}
 
 #endif // GAME_H_INCLUDED

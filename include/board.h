@@ -7,15 +7,22 @@
 #ifndef BOARD_H_INCLUDED
 #define BOARD_H_INCLUDED
 
-#define EMPTY 0
-#define PLAYER_ONE 1
-#define PLAYER_TWO 2
+
+struct Coord {
+    int x;
+    int y;
+};
 
 struct Board {
     char fields[8][8];
-}
+};
 
-function init_board(struct Board board);
+void init_board(struct Board *board);
+int count_points(struct Board *board, int player);
+int count_markers(struct Board *board);
+int is_field_empty(struct Board *board, struct Coord coord);
+int is_field_valid(struct Board *board, struct Coord coord, int player);
+void set_marker(struct Board *board, struct Coord coord, int player);
 
 #endif // BOARD_H_INCLUDED
 

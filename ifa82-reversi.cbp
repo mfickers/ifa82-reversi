@@ -33,6 +33,9 @@
 		</Compiler>
 		<Unit filename="include/board.h" />
 		<Unit filename="include/game.h" />
+		<Unit filename="src/board.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="src/main.c">
 			<Option compilerVar="CC" />
 		</Unit>
