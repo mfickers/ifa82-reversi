@@ -1,0 +1,24 @@
+# depslib dependency file v1.0
+1556461497 source:c:\users\fabian\desktop\reversi\src\board.c
+	<stdio.h>
+	<stdlib.h>
+	"../include/board.h"
+
+1556314013 c:\users\fabian\desktop\reversi\include\board.h
+
+1556467770 source:c:\users\fabian\desktop\reversi\src\main.c
+	<stdio.h>
+	<stdlib.h>
+	"../include/board.h"
+	"../include/game.h"
+	"../include/io.h"
+
+1556314013 c:\users\fabian\desktop\reversi\include\game.h
+
+1556463707 c:\users\fabian\desktop\reversi\include\io.h
+
+1556464688 source:c:\users\fabian\desktop\reversi\src\io.c
+	<stdio.h>
+	<stdlib.h>
+	"../include/board.h"
+

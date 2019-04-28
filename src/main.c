@@ -10,17 +10,14 @@
 #include <stdlib.h>
 #include "../include/board.h"
 #include "../include/game.h"
+#include "../include/io.h"
 
 void test_board()
 {
     struct Board board;
     init_board(&board);
-    for (int x = 0; x < 8; x++) {
-        for (int y = 0; y < 8; y++) {
-            printf("%d ", board.fields[x][y]);
-        }
-        printf("\n");
-    }
+    render_board(&board);
+
     struct Coord coord6 = {.x = 4, .y = 5};
     set_marker(&board, coord6, 1);
     printf("\nPoints for Player One: %d\n", count_points(&board, 1));
@@ -33,12 +30,8 @@ void test_board()
     printf("\nField (%d|%d) has empty status: %d\n", coord1.x, coord1.y, is_field_empty(&board, coord1));
     printf("\nField (%d|%d) has empty status: %d\n", coord2.x, coord2.y, is_field_empty(&board, coord2));
 
-    for (int x = 0; x < 8; x++) {
-        for (int y = 0; y < 8; y++) {
-            printf("%d ", board.fields[x][y]);
-        }
-        printf("\n");
-    }
+    render_board(&board);
+
     struct Coord coord3 = {.x = 5, .y = 4};
     struct Coord coord4 = {.x = 0, .y = 0};
     struct Coord coord5 = {.x = 4, .y = 5};
