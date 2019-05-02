@@ -14,6 +14,8 @@
 
 void test_board()
 {
+    set_console_title();
+
     struct Board board;
     init_board(&board);
     render_board(&board);
@@ -45,6 +47,6 @@ void test_board()
  **/
 int main()
 {
-    test_board();
+    start();
     return 0;
 }
