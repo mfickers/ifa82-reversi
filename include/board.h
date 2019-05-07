@@ -23,6 +23,7 @@ int count_markers(struct Board *board);
 int is_field_empty(struct Board *board, struct Coord coord);
 int is_field_valid(struct Board *board, struct Coord coord, int player);
 void set_marker(struct Board *board, struct Coord coord, int player);
+int check_direction(struct Board *board, struct Coord coord, int player, struct Coord direction);
 
 #endif // BOARD_H_INCLUDED
 

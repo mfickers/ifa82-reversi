@@ -37,6 +37,9 @@
 		<Unit filename="src/board.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="src/game.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="src/io.c">
 			<Option compilerVar="CC" />
 		</Unit>
