@@ -51,3 +51,5 @@ Module.symvers
 Mkfile.old
 dkms.conf
 ifa82-reversi/ifa82-reversi.depend
+ifa82-reversi.depend
+ifa82-reversi.layout
