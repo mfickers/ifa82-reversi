@@ -11,7 +11,8 @@
 
 /**
  * Resets a given board for a new game
- * @param board: Pointer to a Board
+ *
+ * @param *board The board
  */
 void init_board(struct Board *board)
 {
@@ -31,18 +32,20 @@ void init_board(struct Board *board)
 
 /**
  * Counts every marker of a given player
- * @param board: Pointer to a Board
- * @param player: Number of the Player (1 or 2)
- * @return number of points
+ *
+ * @param *board The board
+ * @param player Number of the Player (1 or 2)
  */
 int count_points(struct Board *board, int player)
 {
     int points = 0;
 
+    // Iterate board
     for (int x = 0; x < 8; x++) {
         for (int y = 0; y < 8; y++) {
-            // increase counter, if field-value matches player-number
+            // For every marker of player
             if (board->fields[x][y] == player) {
+                // Increase player's points
                 points++;
             }
         }
@@ -53,17 +56,19 @@ int count_points(struct Board *board, int player)
 
 /**
  * Counts every marker on a given board
- * @param board: Pointer to a Board
- * @return number of markers
+ *
+ * @param *board The board
  */
 int count_markers(struct Board *board)
 {
     int markers = 0;
 
+    // Iterate board
     for (int x = 0; x < 8; x++) {
         for (int y = 0; y < 8; y++) {
-            // increase counter, if field-value is not 0
+            // For every marker on board
             if (board->fields[x][y] != 0) {
+                // Increase counter
                 markers++;
             }
         }
@@ -74,9 +79,9 @@ int count_markers(struct Board *board)
 
 /**
  * Checks if a given field is empty
- * @param board: Pointer to a Board
- * @param coord: Coordinates of the field on the board (e.g. 4|5)
- * @return 1 if field is empty, 0 if not
+ *
+ * @param *board The board
+ * @param coord  The field to check
  */
 int is_field_empty(struct Board *board, struct Coord coord)
 {
@@ -89,22 +94,17 @@ int is_field_empty(struct Board *board, struct Coord coord)
 
 
 /**
- * Checks the validty of a given field for a given direction
- * @param board: Pointer to a Board
- * @param coord: Coordinates of the field on the board (e.g. 4|5)
- * @param player: Number of the Player (1 or 2)
- * @param direction: Coordinates representing the direction to be checked (e.g.-1|-1)
- * @return 1 if direction is valid, 0 if not
+ * Checks the validity of a given field for a given direction
+ *
+ * @param board     The board
+ * @param coord     The origin field
+ * @param player    The player setting their marker on origin field
+ * @param direction The direction to check
  */
 int check_direction(struct Board *board, struct Coord coord, int player, struct Coord direction)
 {
     // get enemy based on given player
-    int enemy = 0;
-    if (player == 1) {
-        enemy = 2;
-    } else {
-        enemy = 1;
-    }
+    int enemy = player % 2 + 1;
 
     int foundEnemy = 0;
     while (1) {
@@ -135,10 +135,10 @@ int check_direction(struct Board *board, struct Coord coord, int player, struct 
 
 /**
  * Checks if a given field is valid for a given player
- * @param board: Pointer-Variable to a Board
- * @param coord: Coordinates of the field on the board (e.g. 4|5)
- * @param player: Number of the Player (1 or 2)
- * @return 1 if field is valid, 0 if not
+ *
+ * @param board  The board
+ * @param coord  The field to check
+ * @param player The player wanting to set the field
  */
 int is_field_valid(struct Board *board, struct Coord coord, int player)
 {
@@ -170,9 +170,10 @@ int is_field_valid(struct Board *board, struct Coord coord, int player)
 
 /**
  * Sets a marker on the Board for a given player at a given location
- * @param board: Pointer-variable to a Board
- * @param coord: Coordinates of the field to be marked (e.g. 4|5)
- * @param player: Number of the Player (1 or 2)
+ *
+ * @param board  The board
+ * @param coord  The field to set
+ * @param player The player setting the field
  */
 void set_marker(struct Board *board, struct Coord coord, int player)
 {

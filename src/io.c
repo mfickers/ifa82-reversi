@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>
+#include <time.h>
 #include "../include/board.h"
 
 void set_console_title()
@@ -85,4 +86,18 @@ void render_board(struct Board *board)
         }
         printf("\n--|                                \n");
     }
+}
+
+void render_time(int seconds)
+{
+    int minutes = seconds / 60;
+    seconds = seconds % 60;
+    int hours = minutes / 60;
+    minutes = minutes % 60;
+    printf("\nTime: %02d:%02d:%02d\n", hours, minutes, seconds);
+}
+
+void render_score(int score_1, int score_2)
+{
+    printf("\nScore: %d:%d\n\n", score_1, score_2);
 }
