@@ -12,6 +12,7 @@
 #include "../include/board.h"
 #include "../include/io.h"
 #include "../include/ai.h"
+#include "../include/file.h"
 
 struct Board board;
 int last_turn_passed;
