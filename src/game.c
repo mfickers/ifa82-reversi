@@ -19,73 +19,6 @@ int is_game_over;
 time_t timer;
 
 /**
- * Get the other player based on the current player.
- *
- * @param player The player that finished their turn.
- */
-int next_player(int player)
-{
-    player = player % 2 + 1;
-
-    return player;
-}
-
-/**
- * Flips all enemy markers in a direction until own maker found.
- *
- * @param coord     The marker that has been set.
- * @param player    The player that set the marker.
- * @param direction The current direction to propagate.
- */
-void propagate(struct Coord coord, int player, struct Coord direction)
-{
-    do {
-        // go further in given direction
-        coord.x += direction.x;
-        coord.y += direction.y;
-
-        // Flip the markers for player until own marker found.
-        if (board.fields[coord.x][coord.y] == player) {
-            return;
-        } else {
-            set_marker(&board, coord, player);
-        }
-    } while (1);
-}
-
-/**
- * Set and flip all markers for this turn according to the rules.
- *
- * @param move   The position of the marker that will be set this turn.
- * @param player The player that set the marker.
- */
-void process_move(struct Coord move, int player)
-{
-    // Directions representing the fields around the given field
-    struct Coord direction[] = {
-        {.x = -1, .y = -1}, // Upper left
-        {.x = -1, .y =  0}, // Up
-        {.x = -1, .y =  1}, // Upper right
-        {.x =  0, .y = -1}, // Left
-        {.x =  0, .y =  1}, // Right
-        {.x =  1, .y = -1}, // Lower left
-        {.x =  1, .y =  0}, // Down
-        {.x =  1, .y =  1}  // Lower right
-    };
-
-    // Set the new stone;
-    set_marker(&board, move, player);
-
-    // Check every direction
-    for (int i = 0; i < 8; i++) {
-        if (check_direction(&board, move, player, direction[i])) {
-            // Flip enemy markers in this direction.
-            propagate(move, player, direction[i]);
-        }
-    }
-}
-
-/**
  * Render passing message and wait for input
  *
  * @param player The player that has to pass.
@@ -131,7 +64,7 @@ int turn(int player, Type type)
                 move = ai_make_move(&board, player);
             }
         } while (!is_field_valid(&board, move, player));
-        process_move(move, player);
+        process_move(&board, move, player);
         // Reset pass counter
         last_turn_passed = 0;
     } else if (last_turn_passed) {

@@ -9,6 +9,73 @@
 #include <stdlib.h>
 #include "../include/board.h"
 
+// Directions representing the fields around the given field
+const struct Coord DIRECTION[] = {
+    {.x = -1, .y = -1}, // Upper left
+    {.x = -1, .y =  0}, // Up
+    {.x = -1, .y =  1}, // Upper right
+    {.x =  0, .y = -1}, // Left
+    {.x =  0, .y =  1}, // Right
+    {.x =  1, .y = -1}, // Lower left
+    {.x =  1, .y =  0}, // Down
+    {.x =  1, .y =  1}  // Lower right
+};
+
+/**
+ * Get the other player based on the current player.
+ *
+ * @param player The player that finished their turn.
+ */
+int next_player(int player)
+{
+    player = player % 2 + 1;
+
+    return player;
+}
+
+/**
+ * Flips all enemy markers in a direction until own maker found.
+ *
+ * @param coord     The marker that has been set.
+ * @param player    The player that set the marker.
+ * @param direction The current direction to propagate.
+ */
+void propagate(struct Board *board, struct Coord coord, int player, struct Coord direction)
+{
+    do {
+        // go further in given direction
+        coord.x += direction.x;
+        coord.y += direction.y;
+
+        // Flip the markers for player until own marker found.
+        if (board->fields[coord.x][coord.y] == player) {
+            return;
+        } else {
+            set_marker(board, coord, player);
+        }
+    } while (1);
+}
+
+/**
+ * Set and flip all markers for this turn according to the rules.
+ *
+ * @param move   The position of the marker that will be set this turn.
+ * @param player The player that set the marker.
+ */
+void process_move(struct Board *board, struct Coord move, int player)
+{
+    // Set the new stone;
+    set_marker(board, move, player);
+
+    // Check every direction
+    for (int i = 0; i < 8; i++) {
+        if (check_direction(board, move, player, DIRECTION[i])) {
+            // Flip enemy markers in this direction.
+            propagate(board, move, player, DIRECTION[i]);
+        }
+    }
+}
+
 /**
  * Resets a given board for a new game
  *
@@ -146,21 +213,9 @@ int is_field_valid(struct Board *board, struct Coord coord, int player)
         return 0; // Field is already set
     }
 
-    // Directions representing the fields around the given field
-    struct Coord direction[] = {
-        {.x = -1, .y = -1}, // Upper left
-        {.x = -1, .y =  0}, // Up
-        {.x = -1, .y =  1}, // Upper right
-        {.x =  0, .y = -1}, // Left
-        {.x =  0, .y =  1}, // Right
-        {.x =  1, .y = -1}, // Lower left
-        {.x =  1, .y =  0}, // Down
-        {.x =  1, .y =  1}  // Lower right
-    };
-
     // Check every direction
     for (int i = 0; i < 8; i++) {
-        if (check_direction(board, coord, player, direction[i])) {
+        if (check_direction(board, coord, player, DIRECTION[i])) {
             return 1;
         }
     }

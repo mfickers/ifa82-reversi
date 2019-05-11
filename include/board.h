@@ -17,6 +17,9 @@ struct Board {
     char fields[8][8];
 };
 
+int next_player(int player);
+void propagate(struct Board *board, struct Coord coord, int player, struct Coord direction);
+void process_move(struct Board *board, struct Coord move, int player);
 void init_board(struct Board *board);
 int count_points(struct Board *board, int player);
 int count_markers(struct Board *board);
