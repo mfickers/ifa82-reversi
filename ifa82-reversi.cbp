@@ -31,9 +31,13 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="include/ai.h" />
 		<Unit filename="include/board.h" />
 		<Unit filename="include/game.h" />
 		<Unit filename="include/io.h" />
+		<Unit filename="src/ai.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="src/board.c">
 			<Option compilerVar="CC" />
 		</Unit>
