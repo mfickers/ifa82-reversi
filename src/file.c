@@ -19,8 +19,8 @@ int save_file(struct Board *board, int player, int seconds)
     FILE *file = fopen("Reversi.txt", "w");
 
     // add board to file
-    for(int x = 0; x < 8; x++){
-        for(int y = 0; y < 8; y++){
+    for (int x = 0; x < 8; x++) {
+        for (int y = 0; y < 8; y++) {
             fprintf(file, "%d", board->fields[x][y]);
         }
         fprintf(file,"\n");
@@ -31,6 +31,8 @@ int save_file(struct Board *board, int player, int seconds)
     fprintf(file, "%d\n", seconds);
 
     fclose(file);
+
+    return 0;
 }
 /**
  * @param filename  name of the savestate to be loaded
@@ -49,17 +51,17 @@ struct Savestate get_savestate()
     int char_counter = 0;
     char file_char;
     // read file character by character and stop when end is reached
-    while((file_char = fgetc(file)) != EOF) {
+    while ((file_char = fgetc(file)) != EOF) {
 
         // if in the first 7 lines, get board info
-        if(line_counter <= 7 && file_char != '\n'){
+        if (line_counter <= 7 && file_char != '\n') {
             // get board-values line-by-line from file
             savestate.board.fields[line_counter][char_counter] = file_char - '0';
             char_counter++;
         // if above first 7 lines, get remaining info
-        }else if(line_counter > 7 && file_char != '\n'){
+        } else if (line_counter > 7 && file_char != '\n') {
 
-            switch(line_counter){
+            switch (line_counter) {
                 case 8: {
                     // get player-value from file
                     savestate.player = file_char - '0';
@@ -71,15 +73,14 @@ struct Savestate get_savestate()
                 }
             }
         // when new_line, increase line-counter and reset char_counter
-        }else if(file_char == '\n'){
+        } else if (file_char == '\n') {
             line_counter++;
             char_counter = 0;
             continue;
         }
     }
     // set safestate timer by changing time-string to integer and casting it to time_t
-    savestate.timer = (time_t)atoi(time_string);
+    savestate.timer = (time_t) atoi(time_string);
 
     return savestate;
-
 }

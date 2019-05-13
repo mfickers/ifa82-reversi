@@ -22,35 +22,42 @@
 	<stdlib.h>
 	"../include/board.h"
 
-1556560030 source:c:\users\maximilian\documents\github\ifa82-reversi\src\board.c
+1557762678 source:c:\users\maximilian\documents\github\ifa82-reversi\src\board.c
 	<stdio.h>
 	<stdlib.h>
 	"../include/board.h"
 
-1556821944 c:\users\maximilian\documents\github\ifa82-reversi\include\board.h
+1557762678 c:\users\maximilian\documents\github\ifa82-reversi\include\board.h
 
-1556818779 source:c:\users\maximilian\documents\github\ifa82-reversi\src\main.c
+1557769236 source:c:\users\maximilian\documents\github\ifa82-reversi\src\main.c
 	<stdio.h>
 	<stdlib.h>
 	"../include/board.h"
 	"../include/game.h"
 	"../include/io.h"
+	"../include/file.h"
 
-1556818779 c:\users\maximilian\documents\github\ifa82-reversi\include\game.h
+1557762678 c:\users\maximilian\documents\github\ifa82-reversi\include\game.h
 
-1556824078 c:\users\maximilian\documents\github\ifa82-reversi\include\io.h
+1557770200 c:\users\maximilian\documents\github\ifa82-reversi\include\io.h
 
-1556824269 source:c:\users\maximilian\documents\github\ifa82-reversi\src\io.c
+1557770231 source:c:\users\maximilian\documents\github\ifa82-reversi\src\io.c
 	<stdio.h>
 	<stdlib.h>
 	<windows.h>
+	<time.h>
+	<conio.h>
 	"../include/board.h"
 
-1556821505 source:c:\users\maximilian\documents\github\ifa82-reversi\src\game.c
+1557770392 source:c:\users\maximilian\documents\github\ifa82-reversi\src\game.c
 	<stdio.h>
 	<stdlib.h>
+	<time.h>
+	"../include/game.h"
 	"../include/board.h"
 	"../include/io.h"
+	"../include/ai.h"
+	"../include/file.h"
 
 1557766918 source:g:\projects\ifa82-reversi\src\board.c
 	<stdio.h>
@@ -92,4 +99,22 @@
 	<stdlib.h>
 	"../include/board.h"
 	"../include/ai.h"
+
+1557762678 source:c:\users\maximilian\documents\github\ifa82-reversi\src\ai.c
+	<stdlib.h>
+	"../include/board.h"
+	"../include/ai.h"
+
+1557762678 c:\users\maximilian\documents\github\ifa82-reversi\include\ai.h
+
+1557762678 c:\users\maximilian\documents\github\ifa82-reversi\include\file.h
+	<time.h>
+	"../include/board.h"
+
+1557765406 source:c:\users\maximilian\documents\github\ifa82-reversi\src\file.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"../include/board.h"
+	"../include/file.h"
 
