@@ -11,6 +11,7 @@
 #include "../include/board.h"
 #include "../include/game.h"
 #include "../include/io.h"
+#include "../include/file.h"
 
 void test_board()
 {
@@ -47,6 +48,21 @@ void test_board()
  **/
 int main()
 {
-    start();
+    time_t timer;
+    time_t now;
+    time(&now);
+    int time_int = difftime(now, timer);
+
+    // start();
+    struct Board board;
+    init_board(&board);
+    render_board(&board);
+    int player = 2;
+
+    save_file(&board, player, time_int);
+    printf("Saved File!\n");
+
+    struct Savestate savestate = get_savestate();
+    render_board(&savestate.board);
     return 0;
 }
