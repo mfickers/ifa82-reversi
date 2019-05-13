@@ -37,8 +37,6 @@ void pass(int player)
  */
 int turn(int player, Type type)
 {
-    render_board(&board);
-
     // Check if player can make a valid turn
     int valid_field = 0;
     struct Coord coord;
@@ -56,11 +54,11 @@ int turn(int player, Type type)
     after_validation: ;
     if (valid_field) {
         // Player has to move if he can
-        struct Coord move;
+        struct Coord move = {.x = 0, .y = 0};
         // Get a move from input or AI until valid move given
         do {
             if (type == Human) {
-                move = input_move(player);
+                move = input_move(&board, 0, player, move);
             } else {
                 move = ai_make_move(&board, player);
             }
@@ -88,7 +86,6 @@ void start()
 {
     time(&timer); // Start Timer
     set_console_title();
-    printf("-------- R E V E R S I --------\n\n");
 
     // Initialize variables
     init_board(&board);
@@ -98,13 +95,14 @@ void start()
     players[1].type = Cpu;
     last_turn_passed = 0;
     is_game_over = 0;
+    struct Coord cursor = {.x = 0, .y = 0};
 
     // Turn after turn until game is over
     do {
         time_t now;
         time(&now);
-        render_time(difftime(now, timer));
-        render_score(count_points(&board, 1), count_points(&board, 2));
+
+        render(&board, difftime(now, timer), cursor);
 
         // Do a turn for the current player and set the next player
         player = turn(player, players[player - 1].type);

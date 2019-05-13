@@ -8,11 +8,9 @@
 #define IO_H_INCLUDED
 
 void set_console_title();
-void render_board(struct Board *board);
-struct Coord input_move(int player);
+struct Coord input_move(struct Board *board, int seconds, int player, struct Coord cursor);
 void render_pass(int player);
 void render_game_over(int score_1, int score_2);
-void render_score(int score_1, int score_2);
-void render_time(int seconds);
+void render(struct Board *board, int seconds, struct Coord cursor);
 
 #endif // IO_H_INCLUDED
