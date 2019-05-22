@@ -14,10 +14,7 @@
 #include "../include/ai.h"
 #include "../include/file.h"
 
-struct Board board;
-int last_turn_passed;
-int is_game_over;
-time_t timer;
+Game game;
 
 /**
  * Render passing message and wait for input
@@ -44,7 +41,7 @@ int turn(int player, Type type)
         for (int y = 0; y < 8; y++) {
             coord.x = x;
             coord.y = y;
-            if (is_field_valid(&board, coord, player)) {
+            if (is_field_valid(&game.board, coord, game.player)) {
                 valid_field = 1;
                 // A single valid move is enough
                 goto after_validation;
@@ -58,25 +55,65 @@ int turn(int player, Type type)
         // Get a move from input or AI until valid move given
         do {
             if (type == Human) {
-                move = input_move(&board, 0, player, move);
+                time_t now;
+                time(&now);
+                move = input_move(&game.board, difftime(now, game.timer), game.player, game.cursor);
             } else {
-                move = ai_make_move(&board, player);
+                move = ai_make_move(&game.board, game.player);
             }
-        } while (!is_field_valid(&board, move, player));
-        process_move(&board, move, player);
+        } while (!is_field_valid(&game.board, move, game.player));
+        process_move(&game.board, move, game.player);
+        game.cursor = move;
         // Reset pass counter
-        last_turn_passed = 0;
-    } else if (last_turn_passed) {
+        game.last_turn_passed = 0;
+    } else if (game.last_turn_passed) {
         // Two passes in a row => GAME OVER!
-        is_game_over = 1;
+        game.is_game_over = 1;
     } else {
         // Notify of forced pass
-        pass(player);
+        pass(game.player);
         // Remember the pass for next turn
-        last_turn_passed = 1;
+        game.last_turn_passed = 1;
     }
 
-    return next_player(player);
+    return next_player(game.player);
+}
+
+void init_game()
+{
+    // Initialize variables
+    init_board(&game.board);
+    time(&game.timer); // Start Timer
+    game.last_turn_passed = 0;
+    game.is_game_over = 0;
+    game.player = 1;
+    game.cursor.x = 0, game.cursor.y = 0;
+}
+
+void new_game()
+{
+    reset_renderer();
+    render_menu(PlayerOne);
+    MenuInput type = input_menu(PlayerOne);
+    if (type == HumanSelect) {
+        game.players[0].type = Human;
+    } else {
+        game.players[0].type = Cpu;
+    }
+    reset_renderer();
+    render_menu(PlayerTwo);
+    type = input_menu(PlayerTwo);
+    if (type == HumanSelect) {
+        game.players[1].type = Human;
+    } else {
+        game.players[1].type = Cpu;
+    }
+    init_game();
+}
+
+void load_game()
+{
+
 }
 
 /**
@@ -84,30 +121,37 @@ int turn(int player, Type type)
  */
 void start()
 {
-    time(&timer); // Start Timer
     set_console_title();
 
-    // Initialize variables
-    init_board(&board);
-    int player = 1;
-    Player players[2];
-    players[0].type = Human;
-    players[1].type = Cpu;
-    last_turn_passed = 0;
-    is_game_over = 0;
-    struct Coord cursor = {.x = 0, .y = 0};
+    reset_renderer();
+    render_menu(Select);
+    MenuInput input = input_menu(Select);
+    switch (input) {
+    case New:
+        new_game();
+        break;
+    case Load:
+        load_game(&game);
+        break;
+    case Exit:
+        return;
+    default:
+        break;
+    }
+
+    reset_renderer();
 
     // Turn after turn until game is over
     do {
         time_t now;
         time(&now);
 
-        render(&board, difftime(now, timer), cursor);
+        render_game(&game.board, difftime(now, game.timer), game.cursor);
 
         // Do a turn for the current player and set the next player
-        player = turn(player, players[player - 1].type);
-    } while (!is_game_over);
+        game.player = turn(game.player, game.players[game.player - 1].type);
+    } while (!game.is_game_over);
 
     // The end.
-    render_game_over(count_points(&board, 1), count_points(&board, 2));
+    render_game_over(count_points(&game.board, 1), count_points(&game.board, 2));
 }
