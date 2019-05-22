@@ -27,10 +27,26 @@ void pass(int player)
 }
 
 /**
+ * Get the total amount of time of this match
+ *
+ * @return int: Game time in seconds
+ **/
+int get_game_time()
+{
+    time_t now;
+    time(&now);
+
+    // The current playtime + the sum of previous play times
+    return difftime(now, game.timer) + game.seconds;
+}
+
+/**
  * Represents a turn
  *
  * @param player The player that has this turn
  * @param type   Wether the player is human or AI.
+ *
+ * @return int: The player having the next turn
  */
 int turn(int player, Type type)
 {
@@ -53,15 +69,34 @@ int turn(int player, Type type)
         // Player has to move if he can
         struct Coord move = {.x = 0, .y = 0};
         // Get a move from input or AI until valid move given
-        do {
-            if (type == Human) {
-                time_t now;
-                time(&now);
-                move = input_move(&game.board, difftime(now, game.timer), game.player, game.cursor);
-            } else {
-                move = ai_make_move(&game.board, game.player);
-            }
-        } while (!is_field_valid(&game.board, move, game.player));
+        if (type == Human) {
+            UserInput user_input;
+            do {
+                user_input = input_move(&game.board, get_game_time(), game.player, game.cursor);
+                move = user_input.cursor;
+                if (user_input.input == Paused) {
+                    reset_renderer();
+                    render_menu(Pause);
+                    MenuInput menu_input;
+                    do {
+                        menu_input = input_menu(Pause);
+                        if (menu_input == Save) {
+                            save_file(&game);
+                            char message[30];
+                            sprintf(message, "The game has been saved!%c", '\0');
+                            draw_message(message);
+                            render();
+                        } else if (menu_input == Exit) {
+                            exit(0);
+                        } else if (menu_input == Continue) {
+                            game.cursor = move;
+                        }
+                    } while (menu_input != Continue);
+                }
+            } while (user_input.input == Paused || !is_field_valid(&game.board, move, game.player));
+        } else {
+            move = ai_make_move(&game.board, game.player);
+        }
         process_move(&game.board, move, game.player);
         game.cursor = move;
         // Reset pass counter
@@ -111,9 +146,14 @@ void new_game()
     init_game();
 }
 
+/**
+ * Load a saved game
+ **/
 void load_game()
 {
-
+    load_file(&game);
+    // Set the clock to current time
+    time(&game.timer);
 }
 
 /**
@@ -143,10 +183,7 @@ void start()
 
     // Turn after turn until game is over
     do {
-        time_t now;
-        time(&now);
-
-        render_game(&game.board, difftime(now, game.timer), game.cursor);
+        render_game(&game.board, get_game_time(), game.cursor);
 
         // Do a turn for the current player and set the next player
         game.player = turn(game.player, game.players[game.player - 1].type);
