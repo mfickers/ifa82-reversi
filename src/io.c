@@ -1,7 +1,7 @@
 /**
  * Represents the Input and Output Functions for a Reversi-Game
  *
- * Author: Maximilian Fickers, Julian G�rres, Fabian Heeke
+ * Author: Maximilian Fickers, Julian Goerres, Fabian Heeke
  * Date: 03.04.2019
  **/
 
@@ -42,6 +42,7 @@
 #define INPT_THREE 51
 
 char screen[25][51];
+COORD cursor_coord;
 
 void set_console_title()
 {
@@ -50,24 +51,15 @@ void set_console_title()
 
 void render_pass(int player)
 {
-    printf("Player %d had to pass.\n\n", player);
+    char message[30];
+    sprintf(message, "Player %d had to pass!!%c", player, '\0');
+    draw_message(message);
+    render();
     fflush(stdin);
     char c;
     scanf("%c", &c);
 }
 
-void render_game_over(int score_1, int score_2)
-{
-    printf("\n\nGAME OVER!\n\n");
-    if (score_1 > score_2) {
-        printf("Victory: Player One won with %d to %d points!", score_1, score_2);
-    } else if (score_1 < score_2) {
-        printf("Victory: Player Two won with %d to %d points!", score_2, score_1);
-    } else {
-        printf("Draw: Both Players are tied with %d points!", score_1);
-    }
-
-}
 /**
  * Draw the lines of the board into the string array representing the game screen
  **/
@@ -127,7 +119,7 @@ void prepare_screen()
     strcpy(screen[0],  "                                                  \0");
     strcpy(screen[1],  "          - - - R E V E R S I - - -               \0");
     strcpy(screen[2],  "                                                  \0");
-    strcpy(screen[3],  " Score:  0:0                    Time: 00:00:00    \0");
+    strcpy(screen[3],  " Score:  0:0                Time: 00:00:00        \0");
     strcpy(screen[4],  "                                                  \0");
     strcpy(screen[5],  "        1   2   3   4   5   6   7   8             \0");
     strcpy(screen[6],  "                                                  \0");
@@ -185,7 +177,14 @@ void draw_time(int seconds)
 
 
     for (int i = 0; i <= 7; i++) {
-        screen[3][38 + i] = time[i];
+        screen[3][34 + i] = time[i];
+    }
+}
+
+void draw_message(char *message)
+{
+    for (int i = 0; message[i] != '\0'; i++) {
+        screen[23][i + 2] = message[i];
     }
 }
 
@@ -234,7 +233,30 @@ void draw_markers(struct Board *board)
  **/
 void draw_cursor(struct Coord cursor)
 {
-    screen[x_screen(cursor.x)][y_screen(cursor.y)] = CRSR;
+    // Our game logic has x and y swapped, so they have to be interacting with windows console api
+    cursor_coord.Y = x_screen(cursor.x);
+    cursor_coord.X = y_screen(cursor.y);
+}
+
+void reset_cursor()
+{
+    cursor_coord.Y = 24;
+    cursor_coord.X = 0;
+}
+
+void render_game_over(int score_1, int score_2)
+{
+    reset_cursor();
+    render();
+    printf("\nGAME OVER!\n\n");
+    if (score_1 > score_2) {
+        printf("Victory: Player One won with %d to %d points!", score_1, score_2);
+    } else if (score_1 < score_2) {
+        printf("Victory: Player Two won with %d to %d points!", score_2, score_1);
+    } else {
+        printf("Draw: Both Players are tied with %d points!", score_1);
+    }
+
 }
 
 /**
@@ -256,6 +278,8 @@ void render()
     for (int i = 0; i <= 23; i++) {
         printf("%s\n", screen[i]);
     }
+
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cursor_coord);
 }
 
 /**
@@ -277,9 +301,9 @@ void render_game(struct Board *board, int seconds, struct Coord cursor)
 
 void draw_menu()
 {
-    for (int i = 11; i <= 20; i++) {
+    for (int i = 9; i <= 20; i++) {
         for (int j = 9; j <= 30; j++) {
-            if (i == 11) {
+            if (i == 9) {
                 // first line
                 if (j == 9) {
                     screen[i][j] = CRNR_TP_LFT;
@@ -313,35 +337,44 @@ void draw_menu()
  **/
 void draw_menu_items(MenuState state)
 {
-    char item[3][17];
+    char item[4][17];
 
     switch (state) {
     case Select:
-        strcpy(item[0], "1: New Game\0");
-        strcpy(item[1], "2: Load Game\0");
-        strcpy(item[2], "3: Exit\0");
+        strcpy(item[0], " - Reversi - \0");
+        strcpy(item[1], "1: New Game\0");
+        strcpy(item[2], "2: Load Game\0");
+        strcpy(item[3], "3: Exit\0");
         break;
     case Pause:
-        strcpy(item[0], "1: Continue\0");
-        strcpy(item[1], "2: Save Game\0");
-        strcpy(item[2], "3: Exit\0");
+        strcpy(item[0], " - Paused - \0");
+        strcpy(item[1], "1: Continue\0");
+        strcpy(item[2], "2: Save Game\0");
+        strcpy(item[3], "3: Exit\0");
         break;
     case PlayerOne:
+        strcpy(item[0], " - Player One - \0");
+        strcpy(item[1], "1: Human\0");
+        strcpy(item[2], "2: Cpu\0");
+        strcpy(item[3], "\0");
+        break;
     case PlayerTwo:
-        strcpy(item[0], "1: Human\0");
-        strcpy(item[1], "2: Cpu\0");
-        strcpy(item[2], "\0");
+        strcpy(item[0], " - Player Two - \0");
+        strcpy(item[1], "1: Human\0");
+        strcpy(item[2], "2: Cpu\0");
+        strcpy(item[3], "\0");
         break;
     default:
         strcpy(item[0], "\0");
         strcpy(item[1], "\0");
         strcpy(item[2], "\0");
+        strcpy(item[3], "\0");
         break;
     }
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 16 && item[i][j] != '\0'; j++) {
-            screen[13 + 2 * i][11 + j] = item[i][j];
+            screen[11 + 2 * i][11 + j] = item[i][j];
         }
     }
 }
@@ -353,10 +386,19 @@ void render_menu(MenuState state)
 {
     draw_menu();
     draw_menu_items(state);
+    reset_cursor();
 
     render();
 }
 
+/**
+ * Return the correct Command for a given menu and input
+ *
+ * @param MenuState state: The menu
+ * @param int input: The given input
+ *
+ * @return MenuInput: The command for this menu and input
+ **/
 MenuInput parse_menu_input(MenuState state, int input)
 {
     switch (state) {
@@ -414,9 +456,17 @@ MenuInput parse_menu_input(MenuState state, int input)
     return input;
 }
 
+/**
+ * Get user input when in a menu context
+ *
+ * @param MenuState state: The menu context
+ *
+ * @return MenuInput: The command which the user chose with their input
+ **/
 MenuInput input_menu(MenuState state)
 {
     MenuInput input;
+    // Keep listening until valid input given
     while (1) {
         switch (getch()) {
         case INPT_ONE:
@@ -438,10 +488,27 @@ MenuInput input_menu(MenuState state)
     }
 }
 
-struct Coord input_move(struct Board *board, int seconds, int player, struct Coord cursor)
+/**
+ * Get user input while on game screen
+ *
+ * @param struct Board *board: The board
+ * @param int seconds: The game time
+ * @param int player: The player playing this turn
+ * @param struct Coord cursor: The position of the cursor
+ *
+ * @struct Coord: The move chosen by the user
+ **/
+UserInput input_move(struct Board *board, int seconds, int player, struct Coord cursor)
 {
-    printf("It's player %d's turn!", player);
+    char message[30];
+    char player_icon = PLR_ONE;
+    if (player == 2) {
+        player_icon = PLR_TWO;
+    }
+    sprintf(message, "It's player %d's (%c) turn!%c", player, player_icon, '\0');
+    draw_message(message);
 
+    UserInput input;
     while(1) {
         switch(getch()) {
             case INPT_UP:
@@ -470,9 +537,15 @@ struct Coord input_move(struct Board *board, int seconds, int player, struct Coo
                 break;
             case INPT_ESC:
             case INPT_PSE:
-                printf("paused");
+                input.cursor = cursor;
+                input.input = Paused;
+
+                return input;
             case INPT_ENTR:
-                return cursor;
+                input.cursor = cursor;
+                input.input = Move;
+
+                return input;
         }
 
         render_game(board, seconds, cursor);

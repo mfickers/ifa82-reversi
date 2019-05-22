@@ -32,8 +32,8 @@ int save_file(Game *game)
     fprintf(file, "%d\n", game->seconds);
     fprintf(file, "%d\n", game->last_turn_passed);
     fprintf(file, "%d\n", game->is_game_over);
-    fprintf(file, "%d%d\n", game->cursor.x, game->cursor.y);
-    fprintf(file, "%d%d\n", game->players[0], game->players[1]);
+    fprintf(file, "%d\n%d\n", game->cursor.x, game->cursor.y);
+    fprintf(file, "%d\n%d\n", game->players[0].type, game->players[1].type);
 
     fclose(file);
 
@@ -42,9 +42,8 @@ int save_file(Game *game)
 /**
  * @param filename  name of the savestate to be loaded
  */
-int get_savestate(Game *game)
+int load_file(Game *game)
 {
-    printf("Opening file..\n");
     // open file (creates file, if file is not there)
     FILE *file = fopen("Reversi.txt", "r");
 
@@ -71,7 +70,7 @@ int get_savestate(Game *game)
                     break;
                 case 9:
                     // get timer-values from file
-                    time_string[char_counter]  = file_char;
+                    time_string[char_counter] = file_char;
                     char_counter++;
                     break;
                 case 10:
@@ -81,6 +80,16 @@ int get_savestate(Game *game)
                     game->is_game_over = file_char - '0';
                     break;
                 case 12:
+                    game->cursor.x = file_char - '0';
+                    break;
+                case 13:
+                    game->cursor.y = file_char - '0';
+                    break;
+                case 14:
+                    game->players[0].type = file_char - '0';
+                    break;
+                case 15:
+                    game->players[1].type = file_char - '0';
                     break;
             }
         // when new_line, increase line-counter and reset char_counter
