@@ -41,41 +41,53 @@ int get_game_time()
 }
 
 /**
+ * Check if player can make a valid turn
+ *
+ * @param int player: The player to check for
+ *
+ * @return int:
+ *     0 for no valid turns
+ *     1 for at least 1 valid turn
+ **/
+int can_make_turn(int player)
+{
+    struct Coord coord;
+    // Check every field
+    for (int x = 0; x < 8; x++) {
+        for (int y = 0; y < 8; y++) {
+            coord.x = x;
+            coord.y = y;
+            if (is_field_valid(&game.board, coord, player)) {
+                // A single valid move is enough
+                return 1;
+            }
+        }
+    }
+
+    return 0;
+}
+
+/**
  * Represents a turn
  *
- * @param player The player that has this turn
- * @param type   Wether the player is human or AI.
+ * @param int player: The player that has this turn
+ * @param Type type: Wether the player is human or AI.
  *
  * @return int: The player having the next turn
  */
 int turn(int player, Type type)
 {
-    // Check if player can make a valid turn
-    int valid_field = 0;
-    struct Coord coord;
-    for (int x = 0; x < 8; x++) {
-        for (int y = 0; y < 8; y++) {
-            coord.x = x;
-            coord.y = y;
-            if (is_field_valid(&game.board, coord, game.player)) {
-                valid_field = 1;
-                // A single valid move is enough
-                goto after_validation;
-            }
-        }
-    }
-    after_validation: ;
-    if (valid_field) {
-        // Player has to move if he can
-        struct Coord move = {.x = 0, .y = 0};
+    if (can_make_turn(player)) {
         // Get a move from input or AI until valid move given
         if (type == Human) {
             UserInput user_input;
             do {
                 user_input = input_move(&game.board, get_game_time(), game.player, game.cursor);
-                move = user_input.cursor;
+                // Remember cursor position wether move is valid or not
+                game.cursor = user_input.cursor;
                 if (user_input.input == Paused) {
-                    reset_renderer();
+                    // Remember game time because timer will reset after pause
+                    game.seconds = get_game_time();
                     render_menu(Pause);
                     MenuInput menu_input;
                     do {
@@ -87,25 +99,29 @@ int turn(int player, Type type)
                             draw_message(message);
                             render();
                         } else if (menu_input == Exit) {
+                            // Leave the program
                             exit(0);
                         } else if (menu_input == Continue) {
-                            game.cursor = move;
+                            // Restart game timer
+                            time(&game.timer);
+                            reset_renderer();
+                            render_game(&game.board, get_game_time(), game.cursor);
                         }
                     } while (menu_input != Continue);
                 }
-            } while (user_input.input == Paused || !is_field_valid(&game.board, move, game.player));
+            } while (user_input.input == Paused || !is_field_valid(&game.board, game.cursor, game.player));
         } else {
-            move = ai_make_move(&game.board, game.player);
+            // AI can only make valid moves
+            game.cursor = ai_make_move(&game.board, game.player);
         }
-        process_move(&game.board, move, game.player);
-        game.cursor = move;
+        process_move(&game.board, game.cursor, game.player);
         // Reset pass counter
         game.last_turn_passed = 0;
     } else if (game.last_turn_passed) {
         // Two passes in a row => GAME OVER!
         game.is_game_over = 1;
     } else {
-        // Notify of forced pass
+        // Only way to pass is if no valid move is possible
         pass(game.player);
         // Remember the pass for next turn
         game.last_turn_passed = 1;
@@ -114,17 +130,24 @@ int turn(int player, Type type)
     return next_player(game.player);
 }
 
+/**
+ * Initialize all game variables for a new game
+ **/
 void init_game()
 {
     // Initialize variables
     init_board(&game.board);
     time(&game.timer); // Start Timer
+    game.seconds = 0;
     game.last_turn_passed = 0;
     game.is_game_over = 0;
     game.player = 1;
     game.cursor.x = 0, game.cursor.y = 0;
 }
 
+/**
+ * Start a new game, render the menus for choosing player types
+ **/
 void new_game()
 {
     reset_renderer();
