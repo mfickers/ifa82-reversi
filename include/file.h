@@ -8,16 +8,10 @@
 #define FILE_H_INCLUDED
 #include <time.h>
 #include "../include/board.h"
+#include "game.h"
 
-struct Savestate {
-    struct Board board;
-    int player;
-    time_t timer;
-};
-
-// TODO: Add timer
-int save_file(struct Board *board, int player, int seconds);
-struct Savestate get_savestate();
+int save_file(Game *game);
+int load_file(Game *game);
 
 
 #endif // FILE_H_INCLUDED
