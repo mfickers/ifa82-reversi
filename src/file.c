@@ -13,18 +13,20 @@
 #include "../include/file.h"
 #include "../include/game.h"
 
+const char file_name[] = "Reversi.txt";
+
 /**
  * Write all info for the given game into a file
  * Source: https://stackoverflow.com/a/9840678
  *
  * @param Game *game: The game
  *
- * @return int: 0 always, there is no error checking
+ * @return int: 0 always
  **/
 int save_file(Game *game)
 {
     // open file, creating a new one if no file found
-    FILE *file = fopen("Reversi.txt", "w");
+    FILE *file = fopen(file_name, "w");
     // Iterate fields
     for (int x = 0; x < 8; x++) {
         for (int y = 0; y < 8; y++) {
@@ -47,17 +49,18 @@ int save_file(Game *game)
 
     return 0;
 }
+
 /**
- * Load a game from a file
+ * Read the contents of a file and save the info into the Game
  *
- * @param Game *game: The Game to load
+ * @param FILE *file: The file to read from
+ * @param Game *game: The game to read into
  *
- * @return int: 0 always, there is no error checking
+ * @return int:
+ *      1 if game was loaded
  **/
-int load_file(Game *game)
+int _read_file(FILE *file, Game *game)
 {
-    // open file (creates file, if file is not there)
-    FILE *file = fopen("Reversi.txt", "r");
     // set variables for file-parsing
     char time_string[100];
     int line_counter = 0;
@@ -111,5 +114,28 @@ int load_file(Game *game)
     // set safestate timer by changing time-string to integer and casting it to time_t
     game->seconds = (time_t) atoi(time_string);
 
+    return 1;
+}
+
+/**
+ * Load a game from a file
+ *
+ * @param Game *game: The Game to load
+ *
+ * @return int:
+ *      1 if game was loaded
+ *      0 if game could not be loaded
+ **/
+int load_file(Game *game)
+{
+    // try to open the file
+    FILE *file = fopen(file_name, "r");
+    // if file found and opened
+    if (file) {
+        // read contents
+        return _read_file(file, game);
+    }
+
+    // file could not be opened
     return 0;
 }

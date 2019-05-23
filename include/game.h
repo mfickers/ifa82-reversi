@@ -36,6 +36,6 @@ typedef struct {
 } Game;
 
 int get_game_time();
-void start();
+void main_menu();
 
 #endif // GAME_H_INCLUDED

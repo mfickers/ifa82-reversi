@@ -313,8 +313,8 @@ void render_game_over(int score_1, int score_2)
 {
     // Print the GAME OVER message beneath the game screen
     reset_cursor();
+    draw_message(" - - GAME OVER - -         \0");
     render();
-    printf("\nGAME OVER!\n\n");
     // Print the right final message
     if (score_1 > score_2) {
         printf("Victory: Player One won with %d to %d points!", score_1, score_2);
@@ -324,6 +324,8 @@ void render_game_over(int score_1, int score_2)
         printf("Draw: Both Players are tied with %d points!", score_1);
     }
 
+    // Display game over message until next user input
+    getch();
 }
 
 /**
