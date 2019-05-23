@@ -32,16 +32,21 @@
 #define CRSR 220
 #define VLD_FLD 248
 
-#define INPT_ESC 27
-#define INPT_UP 72
-#define INPT_DWN 80
-#define INPT_LFT 75
-#define INPT_RGHT 77
 #define INPT_ENTR 13
-#define INPT_PSE 112
+#define INPT_ESC 27
+#define INPT_SPCE 32
 #define INPT_ONE 49
 #define INPT_TWO 50
 #define INPT_THREE 51
+#define INPT_UP 72
+#define INPT_LFT 75
+#define INPT_RGHT 77
+#define INPT_DWN 80
+#define INPT_A 97
+#define INPT_D 100
+#define INPT_S 115
+#define INPT_W 119
+#define INPT_PSE 112
 
 // The layout of the menus
 const int MENU_START_X = 8;
@@ -626,24 +631,28 @@ UserInput input_move(struct Board *board, int seconds, int player, struct Coord 
         switch(getch()) {
             // Navigate board:
             case INPT_UP:
+            case INPT_W:
                 cursor.x--;
                 if (cursor.x < 0) {
                     cursor.x = 0;
                 }
                 break;
             case INPT_DWN:
+            case INPT_S:
                 cursor.x++;
                 if (cursor.x > 7) {
                     cursor.x = 7;
                 }
                 break;
             case INPT_RGHT:
+            case INPT_D:
                 cursor.y++;
                 if (cursor.y > 7) {
                     cursor.y = 7;
                 }
                 break;
             case INPT_LFT:
+            case INPT_A:
                 cursor.y--;
                 if (cursor.y < 0) {
                     cursor.y = 0;
@@ -658,6 +667,7 @@ UserInput input_move(struct Board *board, int seconds, int player, struct Coord 
                 return input;
             // Attempt to set a marker on the current cursor position
             case INPT_ENTR:
+            case INPT_SPCE:
                 input.cursor = cursor;
                 input.input = Move;
 
