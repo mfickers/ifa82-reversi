@@ -7,12 +7,17 @@
 #ifndef BOARD_H_INCLUDED
 #define BOARD_H_INCLUDED
 
-
+/**
+ * The coordinates of a field on the board
+ **/
 struct Coord {
     int x;
     int y;
 };
 
+/**
+ * The board represented by its 64 fields
+ **/
 struct Board {
     char fields[8][8];
 };

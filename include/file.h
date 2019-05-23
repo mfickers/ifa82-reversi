@@ -13,5 +13,4 @@
 int save_file(Game *game);
 int load_file(Game *game);
 
-
 #endif // FILE_H_INCLUDED

@@ -1,5 +1,5 @@
 /**
- * An artificial intelligence that is able to play Reversi.
+ * An artificial intelligence that is able to play Reversi
  *
  * Author: Maximilian Fickers, Julian Görres, Fabian Heeke
  * Date: 07.05.2019

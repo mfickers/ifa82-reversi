@@ -24,10 +24,13 @@ const struct Coord DIRECTION[] = {
 /**
  * Get the other player based on the current player.
  *
- * @param player The player that finished their turn.
+ * @param int player: The player that finished their turn.
+ *
+ * @return int: The next player
  */
 int next_player(int player)
 {
+    // Loops through 1 and 2
     player = player % 2 + 1;
 
     return player;
@@ -36,9 +39,10 @@ int next_player(int player)
 /**
  * Flips all enemy markers in a direction until own maker found.
  *
- * @param coord     The marker that has been set.
- * @param player    The player that set the marker.
- * @param direction The current direction to propagate.
+ * @param struct Board *board: The board
+ * @param struct Coord coord: The marker that has been set.
+ * @param int player: The player that set the marker.
+ * @param struct Coord direction: The current direction to propagate.
  */
 void propagate(struct Board *board, struct Coord coord, int player, struct Coord direction)
 {
@@ -59,8 +63,9 @@ void propagate(struct Board *board, struct Coord coord, int player, struct Coord
 /**
  * Set and flip all markers for this turn according to the rules.
  *
- * @param move   The position of the marker that will be set this turn.
- * @param player The player that set the marker.
+ * @param struct Board *board: The board
+ * @param struct Coord move: The position of the marker that will be set this turn.
+ * @param int player: The player that set the marker.
  */
 void process_move(struct Board *board, struct Coord move, int player)
 {
@@ -69,6 +74,7 @@ void process_move(struct Board *board, struct Coord move, int player)
 
     // Check every direction
     for (int i = 0; i < 8; i++) {
+        // For every direction with markers to flip
         if (check_direction(board, move, player, DIRECTION[i])) {
             // Flip enemy markers in this direction.
             propagate(board, move, player, DIRECTION[i]);
@@ -79,7 +85,7 @@ void process_move(struct Board *board, struct Coord move, int player)
 /**
  * Resets a given board for a new game
  *
- * @param *board The board
+ * @param struct Board *board: The board
  */
 void init_board(struct Board *board)
 {
@@ -100,8 +106,10 @@ void init_board(struct Board *board)
 /**
  * Counts every marker of a given player
  *
- * @param *board The board
- * @param player Number of the Player (1 or 2)
+ * @param struct Board *board: The board
+ * @param int player: Number of the Player (1 or 2)
+ *
+ * @return int: Number of markers for the player
  */
 int count_points(struct Board *board, int player)
 {
@@ -124,7 +132,9 @@ int count_points(struct Board *board, int player)
 /**
  * Counts every marker on a given board
  *
- * @param *board The board
+ * @param struct Board *board: The board
+ *
+ * @return int: The total number of markers
  */
 int count_markers(struct Board *board)
 {
@@ -147,11 +157,16 @@ int count_markers(struct Board *board)
 /**
  * Checks if a given field is empty
  *
- * @param *board The board
- * @param coord  The field to check
+ * @param struct Board *board: The board
+ * @param struct Coord coord: The field to check
+ *
+ * @return int:
+ *      1 if field is empty
+ *      0 if field is not empty
  */
 int is_field_empty(struct Board *board, struct Coord coord)
 {
+    // Is field empty?
     if (board->fields[coord.x][coord.y] == 0) {
         return 1;
     }
@@ -163,37 +178,42 @@ int is_field_empty(struct Board *board, struct Coord coord)
 /**
  * Checks the validity of a given field for a given direction
  *
- * @param board     The board
- * @param coord     The origin field
- * @param player    The player setting their marker on origin field
- * @param direction The direction to check
+ * @param struct Board *board: The board
+ * @param struct Coord coord: The origin field
+ * @param int player: The player setting their marker on origin field
+ * @param struct Coord direction: The direction to check
+ *
+ * @return int:
+ *      1 if this direction makes this move valid
+ *      0 if this direction does not make this move valid
  */
 int check_direction(struct Board *board, struct Coord coord, int player, struct Coord direction)
 {
     // get enemy based on given player
-    int enemy = player % 2 + 1;
-
+    int enemy = next_player(player);
     int foundEnemy = 0;
+
     while (1) {
         // go further in given direction
         coord.x += direction.x;
         coord.y += direction.y;
-        // check, if the end of the field is reached
+        // check, if the end of the board is reached
         if (coord.x < 0 || coord.x > 7) {
-            break;
+            break; // Not valid
         }
         if (coord.y < 0 || coord.y > 7) {
-            break;
+            break; // Not valid
         }
-        // if an friendly field has been found after an enemy-field, validate field
+        // if an friendly field has been found after an enemy-field,
         if (board->fields[coord.x][coord.y] == player && foundEnemy) {
             return 1; // Field is valid;
-        // remember if an enemy field has been found
+        // if an enemy stone has been found
         } else if (board->fields[coord.x][coord.y] == enemy) {
-            foundEnemy = 1;
-        // if the first field is empty or friendly, stop checking
+            foundEnemy = 1; // remember
+        // if there is an empty field, or a friendly marker before the first
+        // enemy marker
         } else {
-            break;
+            break; // Not valid
         }
     }
 
@@ -203,12 +223,17 @@ int check_direction(struct Board *board, struct Coord coord, int player, struct 
 /**
  * Checks if a given field is valid for a given player
  *
- * @param board  The board
- * @param coord  The field to check
- * @param player The player wanting to set the field
+ * @param struct Board *board: The board
+ * @param struct Coord coord: The field to check
+ * @param int player: The player wanting to set the field
+ *
+ * @return int:
+ *      1 if this field is valid
+ *      0 if this field is not valid
  */
 int is_field_valid(struct Board *board, struct Coord coord, int player)
 {
+    // Only empty fields can be valid
     if (!is_field_empty(board, coord)) {
         return 0; // Field is already set
     }
@@ -216,19 +241,19 @@ int is_field_valid(struct Board *board, struct Coord coord, int player)
     // Check every direction
     for (int i = 0; i < 8; i++) {
         if (check_direction(board, coord, player, DIRECTION[i])) {
-            return 1;
+            return 1; // One valid direction suffices
         }
     }
 
-    return 0;
+    return 0; // Not valid
 }
 
 /**
  * Sets a marker on the Board for a given player at a given location
  *
- * @param board  The board
- * @param coord  The field to set
- * @param player The player setting the field
+ * @param struct Board *board: The board
+ * @param struct Coord coord: The field to set
+ * @param int player: The player setting the field
  */
 void set_marker(struct Board *board, struct Coord coord, int player)
 {
