@@ -14,11 +14,12 @@
 #include "../include/file.h"
 
 /**
- * Start.
+ * Start the program
  **/
 int main()
 {
-    start();
+    // Open the main menu;
+    main_menu();
 
     return 0;
 }

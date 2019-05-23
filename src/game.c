@@ -201,39 +201,27 @@ void _new_game()
 /**
  * Load a saved game
  **/
-void _load_game()
+int _load_game()
 {
-    load_file(&game);
-    // Restart game timer
-    time(&game.timer);
+    // Try to load game
+    if (load_file(&game)) {
+        // Game loaded, restart game timer
+        time(&game.timer);
+
+        return 1; // success
+    }
+    // Game could not be loaded
+    draw_message("Game could not be loaded\0");
+    render();
+
+    return 0; // failure
 }
 
 /**
  * Start the game
  */
-void start()
+void _start()
 {
-    // Prepare console output
-    set_console_title();
-    reset_renderer();
-    render_menu(Select);
-    // Choose between new game, load game and quit
-    MenuInput input = input_menu(Select);
-    switch (input) {
-    case New:
-        _new_game();
-        break;
-    case Load:
-        _load_game(&game);
-        break;
-    case Exit:
-        return;
-    default:
-        break;
-    }
-    // Exit title menu
-    reset_renderer();
-
     // Turn after turn until game is over
     do {
         // Do a turn for the current player and set the next player
@@ -242,4 +230,49 @@ void start()
 
     // The end.
     render_game_over(count_points(&game.board, 1), count_points(&game.board, 2));
+}
+
+/**
+ * Handle the main menu
+ **/
+void main_menu()
+{
+    // Prepare console output
+    set_console_title();
+    // Draw the main menu
+    reset_renderer();
+    render_menu(Select);
+    // Return to menu after each game
+    do {
+         // Choose between new game, load game and quit
+        MenuInput input = input_menu(Select);
+        switch (input) {
+        case New:
+            // Prepare a new game
+            _new_game();
+            // Exit menu
+            break;
+        case Load:
+            // Try to load game
+            if (_load_game(&game)) {
+                // Exit menu
+                break;
+            }
+            // If game could not be loaded, stay in menu
+            continue;
+        case Exit:
+            // Quit
+            exit(0);
+        default:
+            // Stay in menu
+            continue;
+        }
+        // Exit title menu
+        reset_renderer();
+        // Start the game
+        _start();
+        // Draw the main menu after game over
+        reset_renderer();
+        render_menu(Select);
+    } while (1);
 }
