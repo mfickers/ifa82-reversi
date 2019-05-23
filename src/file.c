@@ -13,40 +13,51 @@
 #include "../include/file.h"
 #include "../include/game.h"
 
-// Source: https://stackoverflow.com/a/9840678
+/**
+ * Write all info for the given game into a file
+ * Source: https://stackoverflow.com/a/9840678
+ *
+ * @param Game *game: The game
+ *
+ * @return int: 0 always, there is no error checking
+ **/
 int save_file(Game *game)
 {
-    // open file (creates file, if file is not existing yet)
+    // open file, creating a new one if no file found
     FILE *file = fopen("Reversi.txt", "w");
-
-    // add board to file
+    // Iterate fields
     for (int x = 0; x < 8; x++) {
         for (int y = 0; y < 8; y++) {
+            // print field values line by line
             fprintf(file, "%d", game->board.fields[x][y]);
         }
         fprintf(file,"\n");
     }
-    //add player to file
+    // add player to file
     fprintf(file, "%d\n", game->player);
-    //add time to file
+    // add time to file
     fprintf(file, "%d\n", game->seconds);
+    // Print other game info to file
     fprintf(file, "%d\n", game->last_turn_passed);
     fprintf(file, "%d\n", game->is_game_over);
     fprintf(file, "%d\n%d\n", game->cursor.x, game->cursor.y);
     fprintf(file, "%d\n%d\n", game->players[0].type, game->players[1].type);
-
+    // Close the file stream
     fclose(file);
 
     return 0;
 }
 /**
- * @param filename  name of the savestate to be loaded
- */
+ * Load a game from a file
+ *
+ * @param Game *game: The Game to load
+ *
+ * @return int: 0 always, there is no error checking
+ **/
 int load_file(Game *game)
 {
     // open file (creates file, if file is not there)
     FILE *file = fopen("Reversi.txt", "r");
-
     // set variables for file-parsing
     char time_string[100];
     int line_counter = 0;
@@ -54,15 +65,13 @@ int load_file(Game *game)
     char file_char;
     // read file character by character and stop when end is reached
     while ((file_char = fgetc(file)) != EOF) {
-
         // if in the first 7 lines, get board info
         if (line_counter <= 7 && file_char != '\n') {
             // get board-values line-by-line from file
             game->board.fields[line_counter][char_counter] = file_char - '0';
             char_counter++;
-        // if above first 7 lines, get remaining info
+        // after 7 lines, get remaining info
         } else if (line_counter > 7 && file_char != '\n') {
-
             switch (line_counter) {
                 case 8:
                     // get player-value from file

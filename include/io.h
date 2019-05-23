@@ -9,10 +9,41 @@
 
 #include "board.h"
 
-typedef enum {Select, PlayerOne, PlayerTwo, Pause} MenuState;
-typedef enum {Continue, Exit, Load, Save, New, Invalid, HumanSelect, CpuSelect} MenuInput;
-typedef enum {Paused, Move} Input;
+/**
+ * The IO needs to now which menu to render and how to interpret the input given in a menu
+ **/
+typedef enum {
+    Select,
+    PlayerOne,
+    PlayerTwo,
+    Pause
+} MenuState;
 
+/**
+ * The Input returned from a menu state by the IO
+ **/
+typedef enum {
+    Continue,
+    Exit,
+    Load,
+    Save,
+    New,
+    Invalid,
+    HumanSelect,
+    CpuSelect
+} MenuInput;
+
+/**
+ * Wether the player put in a move or a pause command
+ **/
+typedef enum {
+    Paused,
+    Move
+} Input;
+
+/**
+ * The Input returned during the active game by the IO
+ **/
 typedef struct {
     struct Coord cursor;
     Input input;

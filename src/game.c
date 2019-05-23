@@ -14,12 +14,13 @@
 #include "../include/ai.h"
 #include "../include/file.h"
 
+// The data of the current game
 Game game;
 
 /**
  * Render passing message and wait for input
  *
- * @param player The player that has to pass.
+ * @param int player: The player that has to pass.
  */
 void pass(int player)
 {
@@ -70,29 +71,34 @@ int can_make_turn(int player)
 /**
  * Represents a turn
  *
- * @param int player: The player that has this turn
+ * @param int player: The player playing this turn
  * @param Type type: Wether the player is human or AI.
  *
  * @return int: The player having the next turn
  */
 int turn(int player, Type type)
 {
+    // If there is no valid move, the player will have to pass
     if (can_make_turn(player)) {
-        // Get a move from input or AI until valid move given
         if (type == Human) {
+            // Get user input until valid move made
             UserInput user_input;
             do {
                 user_input = input_move(&game.board, get_game_time(), game.player, game.cursor);
-                // Remember cursor position wether move is valid or not
+                // Remember cursor position whether move is valid or not
                 game.cursor = user_input.cursor;
+                // Pause the game if user requested a pause
                 if (user_input.input == Paused) {
                     // Remember game time because timer will reset after pause
                     game.seconds = get_game_time();
                     render_menu(Pause);
+                    // Handle pause menu
                     MenuInput menu_input;
+                    // Stay in menu until continued or quit
                     do {
                         menu_input = input_menu(Pause);
                         if (menu_input == Save) {
+                            // Save the game
                             save_file(&game);
                             char message[30];
                             sprintf(message, "The game has been saved!%c", '\0');
@@ -105,6 +111,7 @@ int turn(int player, Type type)
                             // Restart game timer
                             time(&game.timer);
                             reset_renderer();
+                            // Exit pause menu
                             render_game(&game.board, get_game_time(), game.cursor);
                         }
                     } while (menu_input != Continue);
@@ -121,7 +128,7 @@ int turn(int player, Type type)
         // Two passes in a row => GAME OVER!
         game.is_game_over = 1;
     } else {
-        // Only way to pass is if no valid move is possible
+        // Force player to pass, because no valid moves
         pass(game.player);
         // Remember the pass for next turn
         game.last_turn_passed = 1;
@@ -141,8 +148,8 @@ void init_game()
     game.seconds = 0;
     game.last_turn_passed = 0;
     game.is_game_over = 0;
-    game.player = 1;
-    game.cursor.x = 0, game.cursor.y = 0;
+    game.player = 1; // Player 1 goes first
+    game.cursor.x = 0, game.cursor.y = 0; // upper left corner
 }
 
 /**
@@ -152,6 +159,7 @@ void new_game()
 {
     reset_renderer();
     render_menu(PlayerOne);
+    // Choose Type of player 1
     MenuInput type = input_menu(PlayerOne);
     if (type == HumanSelect) {
         game.players[0].type = Human;
@@ -160,12 +168,14 @@ void new_game()
     }
     reset_renderer();
     render_menu(PlayerTwo);
+    // Choose Type of player 2
     type = input_menu(PlayerTwo);
     if (type == HumanSelect) {
         game.players[1].type = Human;
     } else {
         game.players[1].type = Cpu;
     }
+    // Prepare a new game
     init_game();
 }
 
@@ -175,7 +185,7 @@ void new_game()
 void load_game()
 {
     load_file(&game);
-    // Set the clock to current time
+    // Restart game timer
     time(&game.timer);
 }
 
@@ -184,10 +194,11 @@ void load_game()
  */
 void start()
 {
+    // Prepare console output
     set_console_title();
-
     reset_renderer();
     render_menu(Select);
+    // Choose between new game, load game and quit
     MenuInput input = input_menu(Select);
     switch (input) {
     case New:
@@ -201,13 +212,13 @@ void start()
     default:
         break;
     }
-
+    // Exit title menu
     reset_renderer();
 
     // Turn after turn until game is over
     do {
+        // Update game screen
         render_game(&game.board, get_game_time(), game.cursor);
-
         // Do a turn for the current player and set the next player
         game.player = turn(game.player, game.players[game.player - 1].type);
     } while (!game.is_game_over);

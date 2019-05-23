@@ -9,12 +9,21 @@
 
 #include "board.h"
 
+/**
+ * Players can be either Human or computer-controlled
+ **/
 typedef enum {Human, Cpu} Type;
 
+/**
+ * For saving player-related data
+ **/
 typedef struct {
     Type type;
 } Player;
 
+/**
+ * All necessary info to save and load a game
+ **/
 typedef struct {
     struct Board board;
     int player;
@@ -26,6 +35,7 @@ typedef struct {
     Player players[2];
 } Game;
 
+int get_game_time();
 void start();
 
 #endif // GAME_H_INCLUDED

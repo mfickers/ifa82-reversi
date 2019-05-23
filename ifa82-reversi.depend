@@ -22,12 +22,12 @@
 	<stdlib.h>
 	"../include/board.h"
 
-1558558338 source:c:\users\maximilian\documents\github\ifa82-reversi\src\board.c
+1558632144 source:c:\users\maximilian\documents\github\ifa82-reversi\src\board.c
 	<stdio.h>
 	<stdlib.h>
 	"../include/board.h"
 
-1558558338 c:\users\maximilian\documents\github\ifa82-reversi\include\board.h
+1558630346 c:\users\maximilian\documents\github\ifa82-reversi\include\board.h
 
 1557769236 source:c:\users\maximilian\documents\github\ifa82-reversi\src\main.c
 	<stdio.h>
@@ -37,10 +37,10 @@
 	"../include/io.h"
 	"../include/file.h"
 
-1558558338 c:\users\maximilian\documents\github\ifa82-reversi\include\game.h
+1558636806 c:\users\maximilian\documents\github\ifa82-reversi\include\game.h
 	"board.h"
 
-1558558338 c:\users\maximilian\documents\github\ifa82-reversi\include\io.h
+1558630688 c:\users\maximilian\documents\github\ifa82-reversi\include\io.h
 	"board.h"
 
 1558558338 source:c:\users\maximilian\documents\github\ifa82-reversi\src\io.c
@@ -52,7 +52,7 @@
 	"../include/board.h"
 	"../include/io.h"
 
-1558558572 source:c:\users\maximilian\documents\github\ifa82-reversi\src\game.c
+1558632714 source:c:\users\maximilian\documents\github\ifa82-reversi\src\game.c
 	<stdio.h>
 	<stdlib.h>
 	<time.h>
@@ -107,19 +107,19 @@
 	"../include/board.h"
 	"../include/ai.h"
 
-1558558338 source:c:\users\maximilian\documents\github\ifa82-reversi\src\ai.c
+1558637744 source:c:\users\maximilian\documents\github\ifa82-reversi\src\ai.c
 	<stdlib.h>
 	"../include/board.h"
 	"../include/ai.h"
 
-1557762678 c:\users\maximilian\documents\github\ifa82-reversi\include\ai.h
+1558630367 c:\users\maximilian\documents\github\ifa82-reversi\include\ai.h
 
-1558558338 c:\users\maximilian\documents\github\ifa82-reversi\include\file.h
+1558630350 c:\users\maximilian\documents\github\ifa82-reversi\include\file.h
 	<time.h>
 	"../include/board.h"
 	"game.h"
 
-1558558338 source:c:\users\maximilian\documents\github\ifa82-reversi\src\file.c
+1558635239 source:c:\users\maximilian\documents\github\ifa82-reversi\src\file.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
