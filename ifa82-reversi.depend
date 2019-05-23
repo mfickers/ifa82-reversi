@@ -40,10 +40,10 @@
 1558636806 c:\users\maximilian\documents\github\ifa82-reversi\include\game.h
 	"board.h"
 
-1558630688 c:\users\maximilian\documents\github\ifa82-reversi\include\io.h
+1558639620 c:\users\maximilian\documents\github\ifa82-reversi\include\io.h
 	"board.h"
 
-1558558338 source:c:\users\maximilian\documents\github\ifa82-reversi\src\io.c
+1558639612 source:c:\users\maximilian\documents\github\ifa82-reversi\src\io.c
 	<stdio.h>
 	<stdlib.h>
 	<windows.h>
@@ -51,8 +51,9 @@
 	<conio.h>
 	"../include/board.h"
 	"../include/io.h"
+	"../include/game.h"
 
-1558632714 source:c:\users\maximilian\documents\github\ifa82-reversi\src\game.c
+1558639300 source:c:\users\maximilian\documents\github\ifa82-reversi\src\game.c
 	<stdio.h>
 	<stdlib.h>
 	<time.h>

@@ -249,19 +249,29 @@ int y_screen(int y)
  * Set all markers in the screen array
  *
  * @param struct Board *board: The board
+ * @param int player: The player making the current turn
  **/
-void draw_markers(struct Board *board)
+void draw_markers(struct Board *board, int player)
 {
     // Iterate over board
     for (int x = 0; x < 8; x++) {
         for (int y = 0; y < 8; y++) {
-            // Render each field as empty as a default value
-            char field = EMPTY;
-            // Set the chars representing the markers for each player
+            char field; // The char to draw this field
             if (board->fields[x][y] == 1) {
+                // This field has a marker of player one on it
                 field = PLR_ONE;
             } else if (board->fields[x][y] == 2) {
+                // This field has a marker of player two on it
                 field = PLR_TWO;
+            } else {
+                // This field is empty
+                field = EMPTY;
+                // Check if field is playable by player
+                struct Coord coord = {.x = x, .y = y};
+                if (is_field_valid(board, coord, player)) {
+                    // This field is empty and can be set by player
+                    field = VLD_FLD;
+                }
             }
             // Set the field char in the screen array
             screen[x_screen(x)][y_screen(y)] = field;
@@ -345,14 +355,15 @@ void render()
  *
  * @param struct Board *board: The board
  * @param int seconds: The game time in seconds
- : @param struct Coord cursor: The position of the cursor
+ * @param struct Coord cursor: The position of the cursor
+ * @param int player: The player making the current turn
  **/
-void render_game(struct Board *board, int seconds, struct Coord cursor)
+void render_game(struct Board *board, int seconds, struct Coord cursor, int player)
 {
     // Draw all UI elements to the screen array
     draw_score(board);
     draw_time(seconds);
-    draw_markers(board);
+    draw_markers(board, player);
     draw_cursor(cursor);
     // Re-draw everything
     render();
@@ -574,6 +585,23 @@ MenuInput input_menu(MenuState state)
 }
 
 /**
+ * Draw the message announcing this players turn
+ *
+ * @param int player: The player to announce.
+ **/
+void draw_turn_message(int player)
+{
+    // Render the message announcing the current turn
+    char message[30];
+    char player_icon = PLR_ONE;
+    if (player == 2) {
+        player_icon = PLR_TWO;
+    }
+    sprintf(message, "It's player %d's (%c) turn!%c", player, player_icon, '\0');
+    draw_message(message);
+}
+
+/**
  * Get user input while on game screen
  *
  * @param struct Board *board: The board
@@ -585,14 +613,6 @@ MenuInput input_menu(MenuState state)
  **/
 UserInput input_move(struct Board *board, int seconds, int player, struct Coord cursor)
 {
-    // Render the message announcing the current turn
-    char message[30];
-    char player_icon = PLR_ONE;
-    if (player == 2) {
-        player_icon = PLR_TWO;
-    }
-    sprintf(message, "It's player %d's (%c) turn!%c", player, player_icon, '\0');
-    draw_message(message);
     // Get user input until either move chosen or paused
     UserInput input;
     while(1) {
@@ -637,6 +657,6 @@ UserInput input_move(struct Board *board, int seconds, int player, struct Coord 
                 return input;
         }
         // Redraw the game after every input
-        render_game(board, get_game_time(), cursor);
+        render_game(board, get_game_time(), cursor, player);
     }
 }

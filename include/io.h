@@ -54,11 +54,12 @@ UserInput input_move(struct Board *board, int seconds, int player, struct Coord 
 void render_pass(int player);
 void render_game_over(int score_1, int score_2);
 void reset_renderer();
-void render_game(struct Board *board, int seconds, struct Coord cursor);
+void render_game(struct Board *board, int seconds, struct Coord cursor, int player);
 void render_menu(MenuState state);
 MenuInput input_menu();
 void draw_message(char *message);
 void render();
 void reset_cursor();
+void draw_turn_message(int player);
 
 #endif // IO_H_INCLUDED
