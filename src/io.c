@@ -517,6 +517,7 @@ MenuInput parse_menu_input(MenuState state, int input)
         // Pause menu
         switch (input) {
         case 1:
+        case 4:
             input = Continue;
             break;
         case 2:
@@ -524,7 +525,7 @@ MenuInput parse_menu_input(MenuState state, int input)
             break;
         case 3:
             input = Exit;
-            break;
+        break;
         default:
             input = Invalid;
             break;
@@ -575,6 +576,10 @@ MenuInput input_menu(MenuState state)
             break;
         case INPT_THREE:
             input = parse_menu_input(state, 3);
+            break;
+        case INPT_ESC:
+        case INPT_PSE:
+            input = parse_menu_input(state, 4);
             break;
         default:
             input = Invalid;
